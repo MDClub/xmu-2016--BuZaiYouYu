@@ -1,6 +1,6 @@
 
-#define USE_CAMERA		0						/*Ê¹ÓÃÉãÏñÍ·ºê¿ª¹Ø*/
-#define DETECT_FRAME	1						/*²âÊÔÖ¡ÂÊºê¿ª¹Ø*/
+#define USE_CAMERA		0						/*ä½¿ç”¨æ‘„åƒå¤´å®å¼€å…³*/
+#define DETECT_FRAME	1						/*æµ‹è¯•å¸§ç‡å®å¼€å…³*/
 
 #include <opencv2/opencv.hpp>
 #include "opencv2/highgui/highgui.hpp"
@@ -22,7 +22,7 @@
 using namespace cv;
 using namespace std;
 
-// ´ÓÍ¼Æ¬µÄx¡¢y×ø±ê´¦·µ»ØÏàÓ¦µÄÉ«µ÷¡¢±¥ºÍ¶ÈºÍÁÁ¶È
+// ä»å›¾ç‰‡çš„xã€yåæ ‡å¤„è¿”å›ç›¸åº”çš„è‰²è°ƒã€é¥±å’Œåº¦å’Œäº®åº¦
 int getpixel(IplImage *image, int x, int y, int *h, int *s, int *v){
 	*h =(uchar) image->imageData[y *image->widthStep+x * image->nChannels];
 	*s =(uchar) image->imageData[y *image->widthStep+ x * image->nChannels + 1];
@@ -32,13 +32,13 @@ int getpixel(IplImage *image, int x, int y, int *h, int *s, int *v){
 
 void ShowCurTime(Mat& curFrame);
 
-//ÉùÃ÷×·×Ùº¯Êı
+//å£°æ˜è¿½è¸ªå‡½æ•°
 void TrackFace( int x,int y,int w,int h,CvCapture* capture,string strName);
 
 int main( )
 {  
-	cout<<"ÇëÊäÈëÒªÊ¶±ğµÄÕÕÆ¬ºÍÃû×Ö"<<endl;
-	//¶ÁÈëÒ»ÕÅÕıÃæÕÕ
+	cout<<"è¯·è¾“å…¥è¦è¯†åˆ«çš„ç…§ç‰‡å’Œåå­—"<<endl;
+	//è¯»å…¥ä¸€å¼ æ­£é¢ç…§
 	string srcPath,strName;
 	while(cin>>srcPath>>strName)
 	{
@@ -46,37 +46,37 @@ int main( )
 		srcImg=imread(srcPath);
 		if(!srcImg.data)
 		{
-			cout<<"ÊäÈëÓĞ´í£¬ÇëÖØĞÂÊäÈë£¡"<<endl;
+			cout<<"è¾“å…¥æœ‰é”™ï¼Œè¯·é‡æ–°è¾“å…¥ï¼"<<endl;
 		}
 		else
 		{
-			//±»Æ¥ÅäµÄÍ¼Æ¬ÎªÊÓÆÁÎÄ¼şµÄÃ¿Ò»Ö¡
+			//è¢«åŒ¹é…çš„å›¾ç‰‡ä¸ºè§†å±æ–‡ä»¶çš„æ¯ä¸€å¸§
 			CvCapture* capture;
 #if USE_CAMERA
-			//Èç¹ûÏëÒªÊÓÆµÊµÊ±¼ì²â£¬ÓÃÏÂÃæÕâÌõ´úÂë
+			//å¦‚æœæƒ³è¦è§†é¢‘å®æ—¶æ£€æµ‹ï¼Œç”¨ä¸‹é¢è¿™æ¡ä»£ç 
 			capture = cvCaptureFromCAM(0);
 #else
-			//Èç¹ûÊÇ¼ì²âÒÑ¾­Â¼ºÃµÄÊÓÆµÎÄ¼ş£¬ÇëÓÃÏÂÃæÕâÌõ´úÂë
+			//å¦‚æœæ˜¯æ£€æµ‹å·²ç»å½•å¥½çš„è§†é¢‘æ–‡ä»¶ï¼Œè¯·ç”¨ä¸‹é¢è¿™æ¡ä»£ç 
 			string strMovie;
-			cout<<"ÇëÊäÈëÊÓÆµÂ·¾¶"<<endl;
+			cout<<"è¯·è¾“å…¥è§†é¢‘è·¯å¾„"<<endl;
 			while(cin>>strMovie)
 			{
 				if(!(capture = cvCaptureFromAVI(strMovie.c_str())))
 				{
-					cout<<"Error:ÇëÊäÈëÕıÈ·ÊÓÆµÂ·¾¶"<<endl;
+					cout<<"Error:è¯·è¾“å…¥æ­£ç¡®è§†é¢‘è·¯å¾„"<<endl;
 				}	
 				else
 					break;
 			}
 #endif
-			cout<<"ÊµÊ±Ê¶±ğ... ÊÓÆµ´°¿ÚÖĞÊäÈëq½áÊøÊ¶±ğ"<<endl;
+			cout<<"å®æ—¶è¯†åˆ«... è§†é¢‘çª—å£ä¸­è¾“å…¥qç»“æŸè¯†åˆ«"<<endl;
 
-			//½«ÕıÃæÕÕ×ª»¯Îª»Ò¶ÈÍ¼Ïñ
+			//å°†æ­£é¢ç…§è½¬åŒ–ä¸ºç°åº¦å›¾åƒ
 			cvtColor(srcImg,srcImg_gray,COLOR_BGR2GRAY);
-			//¼ì²âÒªÆ¥ÅäÍ¼ÏñÖĞµÄÈËÁ³£¬µ÷ÓÃÍ·ÎÄ¼ş¡°renlian.h¡±ÖĞµÄ½Ó¿Úº¯Êı
+			//æ£€æµ‹è¦åŒ¹é…å›¾åƒä¸­çš„äººè„¸ï¼Œè°ƒç”¨å¤´æ–‡ä»¶â€œrenlian.hâ€ä¸­çš„æ¥å£å‡½æ•°
 			int * pResults = NULL; 
 			pResults = facedetect_multiview((unsigned char*)(srcImg_gray.ptr(0)),srcImg_gray.cols, srcImg_gray.rows,srcImg_gray.step,1.2f, 5, 24);
-			//½«ÕıÃæÕÕÖĞµÄÈËÁ³½ØÈ¡³öÀ´
+			//å°†æ­£é¢ç…§ä¸­çš„äººè„¸æˆªå–å‡ºæ¥
 			short * p = ((short*)(pResults+1));
 			int x = p[0];
 			int y = p[1];
@@ -84,48 +84,48 @@ int main( )
 			int h = p[3];
 			//int neighbors = p[4];
 			//int angle = p[5];
-			//ËõĞ¡Á³²¿·¶Î§£¬Í¬Ê±Ò²¾ÍËõĞ¡ÁËÆ¥ÅäÊ±¼ä
+			//ç¼©å°è„¸éƒ¨èŒƒå›´ï¼ŒåŒæ—¶ä¹Ÿå°±ç¼©å°äº†åŒ¹é…æ—¶é—´
 			Rect rect(x+(int)(w/8),y+(int)(w/8),w-(int)(w/4),h-(int)(w/4));
 			srcFace=srcImg_gray(rect);
-			//ÏÔÊ¾Ô­Ê¼Í·Ïñ
-			imshow("Ô­Ê¼Í·Ïñ",srcFace);
+			//æ˜¾ç¤ºåŸå§‹å¤´åƒ
+			imshow("åŸå§‹å¤´åƒ",srcFace);
 
-			/*ÌáÈ¡ÈËÁ³ÌØÕ÷*/
-			//¼ì²âSurf¹Ø¼üµã¡¢ÌáÈ¡ÑµÁ·Í¼ÏñµÄÃèÊö·û
+			/*æå–äººè„¸ç‰¹å¾*/
+			//æ£€æµ‹Surfå…³é”®ç‚¹ã€æå–è®­ç»ƒå›¾åƒçš„æè¿°ç¬¦
 			vector<KeyPoint>  srcImgkeyPoint;
 			Mat  srcImgDescriptor;
 			SurfFeatureDetector featureDetector(80);
 			featureDetector.detect(srcFace,srcImgkeyPoint);
 			SurfDescriptorExtractor featureExtractor;
 			featureExtractor.compute(srcFace,srcImgkeyPoint,srcImgDescriptor);
-			//´´½¨»ùÓÚFlannµÄÃèÊö·ûÆ¥Åä¶ÔÏó
+			//åˆ›å»ºåŸºäºFlannçš„æè¿°ç¬¦åŒ¹é…å¯¹è±¡
 			FlannBasedMatcher matcher;
 			vector<Mat> srcImg_desc_collection(1,srcImgDescriptor);
 			matcher.add(srcImg_desc_collection);
 			matcher.train();
 
-			Mat curFrame,curFrame_gray;		//µ±Ç°ÊÓÆÁÖ¡
-			Mat curFace;									//¼ì²âµ½µÄface
+			Mat curFrame,curFrame_gray;		//å½“å‰è§†å±å¸§
+			Mat curFace;									//æ£€æµ‹åˆ°çš„face
 			while(char(waitKey(1)) !='q')
 			{
 #if DETECT_FRAME
-				//¼ì²âÖ¡ÂÊ
+				//æ£€æµ‹å¸§ç‡
 				int64 time0=getTickCount();
 #endif
-				//¶ÁÈëÃ¿Ò»Ö¡Í¼Ïñ
+				//è¯»å…¥æ¯ä¸€å¸§å›¾åƒ
 				curFrame= cvQueryFrame(capture);
 				if(!curFrame.data) break;
 
-				//ÏÔÊ¾µ±Ç°Ê±¼ä
+				//æ˜¾ç¤ºå½“å‰æ—¶é—´
 				ShowCurTime(curFrame);
 
-				//½«Ã¿Ö¡Í¼Æ¬×ª»¯Îª»Ò¶ÈÍ¼Ïñ
+				//å°†æ¯å¸§å›¾ç‰‡è½¬åŒ–ä¸ºç°åº¦å›¾åƒ
 				cvtColor(curFrame,curFrame_gray,COLOR_BGR2GRAY);
 
-				//¼ì²âÍ¼ÏñÖĞËùÓĞµÄÈËÁ³
+				//æ£€æµ‹å›¾åƒä¸­æ‰€æœ‰çš„äººè„¸
 				pResults = facedetect_multiview((unsigned char*)(curFrame_gray.ptr(0)),curFrame_gray.cols, curFrame_gray.rows,curFrame_gray.step,1.2f, 5, 24);
 
-				//Ê¶±ğÈËÁ³Í¼Ïñ²¢ÓëÔ­ÈËÁ³Í¼ÏñÆ¥Åä£¬Èô´ïµ½ÒªÇóÔòÏÔÊ¾³öÀ´
+				//è¯†åˆ«äººè„¸å›¾åƒå¹¶ä¸åŸäººè„¸å›¾åƒåŒ¹é…ï¼Œè‹¥è¾¾åˆ°è¦æ±‚åˆ™æ˜¾ç¤ºå‡ºæ¥
 				bool hasFound = false;
 				for(int i = 0; i < (pResults ? *pResults : 0); i++)
 				{
@@ -137,21 +137,21 @@ int main( )
 					//int neighbors = p[4];
 					//int angle = p[5];
 
-					//ËõĞ¡Á³²¿·¶Î§£¬Í¬Ê±Ò²¾ÍËõĞ¡ÁËÆ¥ÅäÊ±¼ä
+					//ç¼©å°è„¸éƒ¨èŒƒå›´ï¼ŒåŒæ—¶ä¹Ÿå°±ç¼©å°äº†åŒ¹é…æ—¶é—´
 					Rect rect(x+(int)(w/8),y+(int)(w/8),w-(int)(w/4),h-(int)(w/4));
 					curFace=curFrame_gray(rect);
 
-					//¼ì²âSurf¹Ø¼üµã¡¢ÌáÈ¡ÑµÁ·Í¼ÏñµÄÃèÊö·û
+					//æ£€æµ‹Surfå…³é”®ç‚¹ã€æå–è®­ç»ƒå›¾åƒçš„æè¿°ç¬¦
 					vector<KeyPoint> keyPoint;
 					Mat Descriptor;
 					featureDetector.detect(curFace,keyPoint);
 					featureExtractor.compute(curFace,keyPoint,Descriptor);
 
-					//Æ¥ÅäÑµÁ·ºÍ²âÊÔÃèÊö·û
+					//åŒ¹é…è®­ç»ƒå’Œæµ‹è¯•æè¿°ç¬¦
 					vector<vector<DMatch>> matches;
 					matcher.knnMatch(Descriptor,matches,2);
 
-					//¸ù¾İÀÍÊ½Ëã·¨£¬µÃµ½ÓÅĞãµÄÆ¥Åäµã
+					//æ ¹æ®åŠ³å¼ç®—æ³•ï¼Œå¾—åˆ°ä¼˜ç§€çš„åŒ¹é…ç‚¹
 					vector<DMatch> goodMatches;
 					for(unsigned int k=0;k<matches.size();k++)
 					{
@@ -159,21 +159,25 @@ int main( )
 							goodMatches.push_back(matches[k][0]);
 					}
 
-					//Èç¹ûÓÅĞãÌØÕ÷µã¸öÊı´ïµ½ÒªÇóÔòÏÔÊ¾³öÀ´£¬È»ºó½øĞĞ×·×Ù
+					//å¦‚æœä¼˜ç§€ç‰¹å¾ç‚¹ä¸ªæ•°è¾¾åˆ°è¦æ±‚åˆ™æ˜¾ç¤ºå‡ºæ¥ï¼Œç„¶åè¿›è¡Œè¿½è¸ª
+					/*æ³¨æ„ï¼šä¼˜ç§€åŒ¹é…çš„ç‚¹çš„é˜€å€¼é€‰å–è¶Šå¤§ï¼Œæ£€æµ‹äººè„¸çš„æ­£ç¡®ç‡è¶Šé«˜ï¼Œä½†æ˜¯ï¼Œæ£€æµ‹èŒƒå›´ä¼šå‡å°ï¼›
+					        åä¹‹ï¼Œä¼˜ç§€åŒ¹é…ç‚¹çš„é˜€å€¼é€‰å–çš„è¶Šå°ï¼Œæ£€æµ‹èŒƒå›´ä¼šå˜å¤§ï¼Œæ£€æµ‹çš„æ­£ç¡®ç‡ä¼šé™ä½ã€‚
+					        è¿™é‡Œé»˜è®¤çš„æ˜¯1ï¼Œæ˜¯å› ä¸ºç”¨é¡¹ç›®çš„åŒ…å«çš„è§†é¢‘æ£€æµ‹ä¼šæœ‰å¾ˆå¥½çš„æ•ˆæœï¼Œå¦‚æœç”¨æ‘„åƒå¤´
+					        å®æ—¶æ£€æµ‹è¯·è°ƒé«˜é˜€å€¼ï¼Œä»¥ä¾¿æé«˜çœŸç¡®çš„è¯†åˆ«ç‡*/
 					if(goodMatches.size()>1)
 					{
 						hasFound = true;
-						//°ÑÕıÈ·µÄÍ·ÏñÓÃ·½¿ò¿òÆğÀ´
+						//æŠŠæ­£ç¡®çš„å¤´åƒç”¨æ–¹æ¡†æ¡†èµ·æ¥
 						rectangle( curFrame, Point(x,y), Point(x+w,y+h), Scalar( 255, 0, 255 ), 3, 8, 0 );
 
-						//²åÈëÎÄ×Ö  
-						//²ÎÊıÎª£º³ĞÔØµÄÍ¼Æ¬£¬²åÈëµÄÎÄ×Ö£¬ÎÄ×ÖµÄÎ»ÖÃ£¨ÎÄ±¾¿ò×óÏÂ½Ç£©£¬×ÖÌå£¬´óĞ¡£¬ÑÕÉ«  
+						//æ’å…¥æ–‡å­—  
+						//å‚æ•°ä¸ºï¼šæ‰¿è½½çš„å›¾ç‰‡ï¼Œæ’å…¥çš„æ–‡å­—ï¼Œæ–‡å­—çš„ä½ç½®ï¼ˆæ–‡æœ¬æ¡†å·¦ä¸‹è§’ï¼‰ï¼Œå­—ä½“ï¼Œå¤§å°ï¼Œé¢œè‰²  
 						putText( curFrame, strName, Point( x,y-5),CV_FONT_HERSHEY_COMPLEX, 0.8, Scalar(0, 250, 0)); 
 
-						//ÏÔÊ¾¿ò³öÕæÈ·Í·ÏñµÄÍ¼Ïñ
-						imshow("Ê¶±ğ´°¿Ú",curFrame);
+						//æ˜¾ç¤ºæ¡†å‡ºçœŸç¡®å¤´åƒçš„å›¾åƒ
+						imshow("è¯†åˆ«çª—å£",curFrame);
 
-						//µ÷ÓÃ×·×Ùº¯Êı£¬½øĞĞ×·×Ù
+						//è°ƒç”¨è¿½è¸ªå‡½æ•°ï¼Œè¿›è¡Œè¿½è¸ª
 						TrackFace(x,y,w,h,capture,strName);
 
 						break;
@@ -181,26 +185,26 @@ int main( )
 				}
 				if(!hasFound)
 				{
-					//ÏÔÊ¾Ã»ÓĞÊ¶±ğÕıÈ·Í·ÏñÊ±µÄÍ¼Ïñ
-					imshow("Ê¶±ğ´°¿Ú",curFrame);
+					//æ˜¾ç¤ºæ²¡æœ‰è¯†åˆ«æ­£ç¡®å¤´åƒæ—¶çš„å›¾åƒ
+					imshow("è¯†åˆ«çª—å£",curFrame);
 				}
 			}
 
-			//ÊÍ·ÅÄÚ´æ
-			cvDestroyWindow("Ê¶±ğ´°¿Ú");
-			cvDestroyWindow("Ô­Ê¼Í·Ïñ");
+			//é‡Šæ”¾å†…å­˜
+			cvDestroyWindow("è¯†åˆ«çª—å£");
+			cvDestroyWindow("åŸå§‹å¤´åƒ");
 			cvReleaseCapture(&capture);
 
-			cout<<"Ê¶±ğ½áÊø£¬ÇëÊäÈëÒªÊ¶±ğµÄÕÕÆ¬ºÍÃû×Ö"<<endl;
+			cout<<"è¯†åˆ«ç»“æŸï¼Œè¯·è¾“å…¥è¦è¯†åˆ«çš„ç…§ç‰‡å’Œåå­—"<<endl;
 		}
 	}
 
 	return 0;
 }
-//ÏÔÊ¾Ê±¼äº¯Êı
+//æ˜¾ç¤ºæ—¶é—´å‡½æ•°
 void ShowCurTime(Mat& curFrame)
 {
-	//ÏÔÊ¾Ê±¼ä
+	//æ˜¾ç¤ºæ—¶é—´
 	SYSTEMTIME systime;
 	GetLocalTime(&systime); 
 	unsigned short year = systime.wYear;
@@ -213,34 +217,34 @@ void ShowCurTime(Mat& curFrame)
 	putText(curFrame, time, Point(15,25),CV_FONT_HERSHEY_COMPLEX, 0.8, Scalar(0, 250, 0)); 
 }
 
-//×·×Ùº¯Êı
+//è¿½è¸ªå‡½æ•°
 void TrackFace( int x,int y,int w,int h,CvCapture* capture,string strName)
 {
 	IplImage* image = 0;
 	IplImage* HSV = 0;
 
-	//´´½¨×·×Ù´°¿Ú
-	cvNamedWindow("Ê¶±ğ´°¿Ú", CV_WINDOW_AUTOSIZE );
+	//åˆ›å»ºè¿½è¸ªçª—å£
+	cvNamedWindow("è¯†åˆ«çª—å£", CV_WINDOW_AUTOSIZE );
 
-	//Condensation½á¹¹Ìå³õÊ¼»¯
-	int DP=2; // ×´Ì¬ÏòÁ¿µÄÎ¬Êı
-	int MP=2; // ¹Û²âÏòÁ¿µÄÎ¬Êı
-	int SamplesNum=300; // Ñù±¾Á£×ÓµÄÊıÁ¿
+	//Condensationç»“æ„ä½“åˆå§‹åŒ–
+	int DP=2; // çŠ¶æ€å‘é‡çš„ç»´æ•°
+	int MP=2; // è§‚æµ‹å‘é‡çš„ç»´æ•°
+	int SamplesNum=300; // æ ·æœ¬ç²’å­çš„æ•°é‡
 	CvConDensation* ConDens=cvCreateConDensation( DP, MP, SamplesNum );
 
-	//Condensation½á¹¹ÌåÖĞÒ»Ğ©²ÎÊıµÄ³õÊ¼»¯
-	CvMat* lowerBound; // ÏÂ½ç
-	CvMat* upperBound; // ÉÏ½ç
+	//Condensationç»“æ„ä½“ä¸­ä¸€äº›å‚æ•°çš„åˆå§‹åŒ–
+	CvMat* lowerBound; // ä¸‹ç•Œ
+	CvMat* upperBound; // ä¸Šç•Œ
 	lowerBound = cvCreateMat(2, 1, CV_32F);
 	upperBound = cvCreateMat(2, 1, CV_32F);
-	//ÉèÖÃÁ£×Ó×ø±êµÄÉÏÏÂ½çÎª´°¿Ú´óĞ¡
+	//è®¾ç½®ç²’å­åæ ‡çš„ä¸Šä¸‹ç•Œä¸ºçª—å£å¤§å°
 	cvmSet( lowerBound, 0, 0, x); cvmSet( upperBound, 0, 0, x+w);
 	cvmSet( lowerBound, 1, 0, y); cvmSet( upperBound, 1, 0,y+h);
-	//³õÊ¼»¯
+	//åˆå§‹åŒ–
 	cvConDensInitSampleSet(ConDens, lowerBound, upperBound);
 
 
-	//Ç¨ÒÆ¾ØÕóµÄ³õÊ¼»¯
+	//è¿ç§»çŸ©é˜µçš„åˆå§‹åŒ–
 	ConDens->DynamMatr[0]=1.0;ConDens->DynamMatr[1]=0.0;
 	ConDens->DynamMatr[2]=0.0;ConDens->DynamMatr[3]=1.0;
 
@@ -251,7 +255,7 @@ void TrackFace( int x,int y,int w,int h,CvCapture* capture,string strName)
 		int X,Y;
 		int H,S,V;
 
-		frame = cvQueryFrame( capture );//¶ÁÈëÃ¿Ò»Ö¡
+		frame = cvQueryFrame( capture );//è¯»å…¥æ¯ä¸€å¸§
 
 		if( !frame )
 		{
@@ -269,7 +273,7 @@ void TrackFace( int x,int y,int w,int h,CvCapture* capture,string strName)
 		cvCopy( frame, image, 0 );
 		cvCvtColor(image ,HSV , CV_BGR2HSV);
 
-		//Á£×ÓµÄÖÃĞÅ¶È¼ÆËã£¬ÖÃĞÅ¶ÈĞèÒª×Ô¼º½¨Ä£
+		//ç²’å­çš„ç½®ä¿¡åº¦è®¡ç®—ï¼Œç½®ä¿¡åº¦éœ€è¦è‡ªå·±å»ºæ¨¡
 		int sumX=0;
 		int sumY=0;
 		int minX=10000;
@@ -278,9 +282,9 @@ void TrackFace( int x,int y,int w,int h,CvCapture* capture,string strName)
 		{
 			X=(int)ConDens->flSamples[i][0];
 			Y=(int)ConDens->flSamples[i][1];
-			sumX+=X;//sumXºÍsumYÓÃÓÚ¼ÆËã×·×Ù´°¿ÚµÄÖĞĞÄµã
+			sumX+=X;//sumXå’ŒsumYç”¨äºè®¡ç®—è¿½è¸ªçª—å£çš„ä¸­å¿ƒç‚¹
 			sumY+=Y;
-			if(X>=0 && X<=1280 && Y>=0 && Y<=720) //Á£×ÓµÄ×ø±êÔÚ´°¿Ú·¶Î§Ö®ÄÚ
+			if(X>=0 && X<=1280 && Y>=0 && Y<=720) //ç²’å­çš„åæ ‡åœ¨çª—å£èŒƒå›´ä¹‹å†…
 			{
 				if(minX>X)
 				{
@@ -290,11 +294,11 @@ void TrackFace( int x,int y,int w,int h,CvCapture* capture,string strName)
 				{
 					minY=Y;
 				}
-				//»ñÈ¡HSV¿Õ¼äÖµ
+				//è·å–HSVç©ºé—´å€¼
 				getpixel(HSV, X, Y, &H, &S, &V);
-				if(H<=5 && S>=70) // ·ôÉ«µÄÅĞ¶¨
+				if(H<=5 && S>=70) // è‚¤è‰²çš„åˆ¤å®š
 				{ 
-					//cvCircle(image, cvPoint(X,Y), 4, CV_RGB(255,0,0), 1);//ÏÔÊ¾×·×ÙÁ£×Óµã
+					//cvCircle(image, cvPoint(X,Y), 4, CV_RGB(255,0,0), 1);//æ˜¾ç¤ºè¿½è¸ªç²’å­ç‚¹
 					ConDens->flConfidence[i]=1.0;
 				}
 				else
@@ -308,30 +312,30 @@ void TrackFace( int x,int y,int w,int h,CvCapture* capture,string strName)
 			}
 		}
 
-		//°Ñ×·×ÙµÄÍ·ÏñÓÃ·½¿ò¿òÆğÀ´
+		//æŠŠè¿½è¸ªçš„å¤´åƒç”¨æ–¹æ¡†æ¡†èµ·æ¥
 		cvRectangle(image, cvPoint((int)(sumX/SamplesNum)-(int)(0.5*w),(int)(sumY/SamplesNum)-(int)(0.5*h)), 
 			cvPoint((int)(sumX/SamplesNum)+(int)(0.5*w),(int)(sumY/SamplesNum)+(int)(0.5*h)), Scalar( 255, 0, 255 ), 3, 8, 0 );
 		//cvRectangle(image, cvPoint((int)(sumX/SamplesNum)-(int)(sumX/SamplesNum-minX),(int)(sumY/SamplesNum)-(int)(sumY/SamplesNum-minY)), 
 		//	cvPoint((int)(sumX/SamplesNum)+(int)(sumX/SamplesNum-minX),(int)(sumY/SamplesNum)+(int)(sumY/SamplesNum-minY)), Scalar( 255, 0, 255 ), 3, 8, 0 );
-		//²åÈëÎÄ×Ö  
-		//²ÎÊıÎª£º³ĞÔØµÄÍ¼Æ¬£¬²åÈëµÄÎÄ×Ö£¬ÎÄ×ÖµÄÎ»ÖÃ£¨ÎÄ±¾¿ò×óÏÂ½Ç£©£¬×ÖÌå£¬´óĞ¡£¬ÑÕÉ«  
+		//æ’å…¥æ–‡å­—  
+		//å‚æ•°ä¸ºï¼šæ‰¿è½½çš„å›¾ç‰‡ï¼Œæ’å…¥çš„æ–‡å­—ï¼Œæ–‡å­—çš„ä½ç½®ï¼ˆæ–‡æœ¬æ¡†å·¦ä¸‹è§’ï¼‰ï¼Œå­—ä½“ï¼Œå¤§å°ï¼Œé¢œè‰²  
 		CvFont font; 
 		cvInitFont(&font,CV_FONT_HERSHEY_COMPLEX, 0.5, 1, 1, 1, 8); 
 		cvPutText( image,strName.c_str(),cvPoint((int)(sumX/SamplesNum)-(int)(0.5*w),(int)(sumY/SamplesNum)-(int)(0.5*h)-10),&font, Scalar(0, 250, 0));
 		//cvPutText( image,strName.c_str(),cvPoint((int)(sumX/SamplesNum)-(int)(sumX/SamplesNum-minX),(int)(sumY/SamplesNum)-(int)(sumY/SamplesNum-minY)-10),&font, Scalar(0, 250, 0)); 
 
-		//¸üĞÂÂË²¨Æ÷×´Ì¬
+		//æ›´æ–°æ»¤æ³¢å™¨çŠ¶æ€
 		cvConDensUpdateByTime(ConDens);
 
-		//ÏÔÊ¾Ê±¼ä
+		//æ˜¾ç¤ºæ—¶é—´
 		ShowCurTime((Mat)image);
 
-		//ÏÔÊ¾×·×Ù´°¿Ú
-		cvShowImage( "Ê¶±ğ´°¿Ú", image );
+		//æ˜¾ç¤ºè¿½è¸ªçª—å£
+		cvShowImage( "è¯†åˆ«çª—å£", image );
 		waitKey(1);
 	}
 
-	//ÊÍ·ÅÄÚ´æ
+	//é‡Šæ”¾å†…å­˜
 	cvReleaseImage(&image);
 	cvReleaseImage(&HSV);
 	cvReleaseConDensation(&ConDens);
